@@ -1,5 +1,6 @@
 import express from "express";
 const app = express();
+
 export default app;
 
 import employees from "#db/employees";
@@ -29,6 +30,12 @@ app.route("/employees/:id").get((req, res) => {
   if (!employee) {
     return res.status(404).send("Employee not found");
   }
-
   res.send(employee);
+
+  app.use((error, request, response, next) => {
+    console.error("Error caused by middleware ---:", error.message);
+    response.status(error.status || 500).json({
+      error: error.message || "Internal Server Error!",
+    });
+  });
 });
